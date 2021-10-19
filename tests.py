@@ -72,6 +72,6 @@ if __name__ == "__main__":
     # test_valid_user_id(1)
     # test_non_valid_user_id(5)
     # test_insert_valid_user("Mika", "Mikic", "mika@gmail.com")
-    # test_delete_valid_user(4)
+    test_delete_valid_user(4)
     # test_delete_non_valid_user(7)
-    test_update_non_valid_user(8, "Bane", "Stamenic", "banega@gmail.com")
+    # test_update_non_valid_user(8, "Bane", "Stamenic", "banega@gmail.com")
