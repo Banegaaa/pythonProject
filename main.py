@@ -10,22 +10,38 @@ class UserNotFoundException(Exception):
     pass
 
 
+def file_exists(file_path):
+    return os.path.isfile(file_path)
+
+
+def create_file(file_path):
+    f = open(file_path, "w")
+    data = {"users": {}}
+    json.dump(data, f)
+    f.close()
+
+
 class DB:
     def __init__(self):
         pass
 
     @classmethod
     def get_users(cls):
-        file_path = "./users.json"
-        if os.stat(file_path).st_size == 0:
-            return None
-        else:
-            with open('users.json', 'r') as f:
-                data = json.loads(f.read())
+        if not file_exists(json_file_path):
+            create_file(json_file_path)
+
+        with open('users.json', 'r') as f:
+            data = json.loads(f.read())
+            if len(data["users"] == 0):
+                raise UserNotFoundException
+            else:
                 return data['users']
 
     @classmethod
     def get_user(cls, user_id):
+        if not file_exists(json_file_path):
+            create_file(json_file_path)
+
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
             if user_id in data['users'].keys():
@@ -35,11 +51,15 @@ class DB:
 
     @classmethod
     def insert_user(cls, new_user):
+        if not file_exists(json_file_path):
+            create_file(json_file_path)
+
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
-            max_id = max(int(x) for x in data['users'].keys()) # int(max(data['users'].keys()))
-            if not max_id:
+            if len(data["users"]) == 0:
                 max_id = 0
+            else:
+                max_id = max(int(x) for x in data['users'].keys())  # int(max(data['users'].keys()))
 
         data['users'][str(max_id + 1)] = new_user
 
@@ -48,9 +68,8 @@ class DB:
 
     @classmethod
     def update_user(cls, user_id, user):
-        file_path = "./users.json"
-        if os.stat(file_path).st_size == 0:
-            return None
+        if not file_exists(json_file_path):
+            create_file(json_file_path)
 
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
@@ -64,6 +83,9 @@ class DB:
 
     @classmethod
     def delete_user(cls, user_id):
+        if not file_exists(json_file_path):
+            create_file(json_file_path)
+
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
         if user_id in data['users']:
@@ -96,10 +118,9 @@ def get_user(user_id):
 @app.route('/users/', methods=['POST'])
 def insert_user():
     user = json.loads(request.data)
-    try:
-        return Response(json.dumps(user), status=201, mimetype='application/json')
-    except UserNotFoundException:
-        return Response("Email exists", status=400, mimetype='application/json')
+    DB.insert_user(user)
+    return Response(json.dumps(user), status=201, mimetype='application/json')
+
 
 
 @app.route('/users/<user_id>', methods=['PUT'])

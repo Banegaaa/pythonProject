@@ -27,7 +27,7 @@ def test_valid_user_id(user_id):
     assert response.status_code == 200
 
 
-def test_user_non_valid_user_id(user_id):
+def test_non_valid_user_id(user_id):
     url = "http://localhost:5000/users/{}".format(str(user_id))
     response = requests.get(url=url)
     assert response.status_code == 404
@@ -68,10 +68,10 @@ def test_delete_non_valid_user(user_id):
 
 if __name__ == "__main__":
     # test_number_of_users()
-    # test_first_user()
-    # test_valid_user_id(1)
-    # test_non_valid_user_id(5)
-    # test_insert_valid_user("Mika", "Mikic", "mika@gmail.com")
-    test_delete_valid_user(4)
-    # test_delete_non_valid_user(7)
-    # test_update_non_valid_user(8, "Bane", "Stamenic", "banega@gmail.com")
+    test_first_user()
+    test_valid_user_id(1)
+    test_non_valid_user_id(5)
+    test_insert_valid_user("Mika", "Mikic", "mika@gmail.com")
+    test_delete_valid_user(1)
+    test_delete_non_valid_user(7)
+    test_update_non_valid_user(8, "Bane", "Stamenic", "banega@gmail.com")
