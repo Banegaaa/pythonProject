@@ -3,22 +3,19 @@ from flask import Flask, Response, request
 import os
 
 app = Flask(__name__)
-json_file_path = "/Users/banestamenic/PycharmProjects/pythonProject/users.json"
+json_file_path = os.environ.get('DB_FILE_PATH')
 
 
 class UserNotFoundException(Exception):
     pass
 
 
-def file_exists(file_path):
-    return os.path.isfile(file_path)
-
-
-def create_file(file_path):
-    f = open(file_path, "w")
-    data = {"users": {}}
-    json.dump(data, f)
-    f.close()
+def _check_db_file(file_path):
+    if not os.path.isfile(file_path):
+        f = open(file_path, "w")
+        data = {"users": {}}
+        json.dump(data, f)
+        f.close()
 
 
 class DB:
@@ -27,8 +24,7 @@ class DB:
 
     @classmethod
     def get_users(cls):
-        if not file_exists(json_file_path):
-            create_file(json_file_path)
+        _check_db_file(json_file_path)
 
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
@@ -39,8 +35,7 @@ class DB:
 
     @classmethod
     def get_user(cls, user_id):
-        if not file_exists(json_file_path):
-            create_file(json_file_path)
+        _check_db_file(json_file_path)
 
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
@@ -51,8 +46,7 @@ class DB:
 
     @classmethod
     def insert_user(cls, new_user):
-        if not file_exists(json_file_path):
-            create_file(json_file_path)
+        _check_db_file(json_file_path)
 
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
@@ -68,8 +62,7 @@ class DB:
 
     @classmethod
     def update_user(cls, user_id, user):
-        if not file_exists(json_file_path):
-            create_file(json_file_path)
+        _check_db_file(json_file_path)
 
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
@@ -83,8 +76,7 @@ class DB:
 
     @classmethod
     def delete_user(cls, user_id):
-        if not file_exists(json_file_path):
-            create_file(json_file_path)
+        _check_db_file(json_file_path)
 
         with open('users.json', 'r') as f:
             data = json.loads(f.read())
